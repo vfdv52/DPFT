@@ -46,9 +46,31 @@ CW2/
 │
 ├── environment.yml           # Micromamba environment spec
 ├── checklist.md              # Compliance checklist against assignment requirements
-├── prepare.md                # Project planning notes and workflow
 └── README.md                 # This file
 ```
+
+---
+
+## Environment Setup
+
+Requires the `comp0197-pt` micromamba environment.
+
+```bash
+# Option A: create from spec (if environment does not exist)
+micromamba env create -f environment.yml
+
+# Option B: environment already exists — install the two extra packages only
+micromamba run -n comp0197-pt pip install pandas==3.0.1 scikit-learn==1.8.0
+```
+
+**Extra packages used (2 of 3 allowed):**
+
+| Package | Version | Use |
+|---|---|---|
+| `pandas` | 3.0.1 | CSV data loading |
+| `scikit-learn` | 1.8.0 | `StandardScaler` normalisation |
+
+All other dependencies (`torch`, `numpy`, `pillow`) are included in the base `comp0197-pt` environment.
 
 ---
 
