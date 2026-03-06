@@ -17,6 +17,7 @@ saved_models/gated_*.pt
 # Internal planning files (not for submission)
 prepare.md
 checklist.md
+workflow.md
 hparam_search.sh
 
 # Assignment PDF (UCL copyright, not for redistribution)
