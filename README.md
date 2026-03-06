@@ -1,6 +1,7 @@
-# COMP0197 CW2 — Probabilistic Time Series Forecasting
+# DecompProbFormer: Seasonal Decomposition Meets Heteroscedastic Gaussian Forecasting for Uncertainty-Aware Long-Horizon Time Series Prediction
 
-Group project for COMP0197 Applied Deep Learning.
+COMP0197 Applied Deep Learning · University College London · Group Project 2025–26
+
 **Task**: Predict future values of a time series and quantify the associated uncertainty using a probability distribution output.
 
 ---

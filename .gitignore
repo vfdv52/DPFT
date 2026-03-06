@@ -1,8 +1,9 @@
 # Auto-downloaded data (train.py fetches automatically)
 data/
 
-# Generated outputs
-results/
+# Generated outputs (keep PNGs for project page, exclude log/npy)
+results/*.log
+results/*.npy
 
 # Python cache
 __pycache__/

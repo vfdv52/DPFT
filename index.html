@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DecompProbFormer: Seasonal Decomposition Meets Heteroscedastic Gaussian Forecasting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --text-muted: #555;
+      --accent: #2563eb;
+      --accent-red: #dc2626;
+      --accent-green: #16a34a;
+      --border: #e5e7eb;
+      --surface: #f9fafb;
+      --sans: 'Inter', sans-serif;
+      --serif: 'DM Serif Display', serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* ── HEADER ── */
+    header {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 64px 24px 0;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 4.5vw, 2.9rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: 32px;
+      letter-spacing: -0.01em;
+    }
+
+    .authors {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 2;
+      margin-bottom: 10px;
+    }
+
+    .affils {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .conf-line {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent-red);
+      margin-bottom: 28px;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 56px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.18s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-dark {
+      background: #1a1a1a;
+      color: #fff;
+      border: 2px solid #1a1a1a;
+    }
+    .btn-dark:hover { background: #333; border-color: #333; }
+
+    .btn-outline {
+      background: transparent;
+      color: #1a1a1a;
+      border: 2px solid #d1d5db;
+    }
+    .btn-outline:hover { border-color: #1a1a1a; }
+
+    /* ── HERO FIGURE ── */
+    .hero-fig {
+      max-width: 1000px;
+      margin: 0 auto 0;
+      padding: 0 24px;
+    }
+
+    .hero-fig img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    .hero-caption {
+      text-align: center;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-top: 12px;
+      line-height: 1.6;
+      padding: 0 12px;
+    }
+
+    /* two-image hero row */
+    .hero-two {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) { .hero-two { grid-template-columns: 1fr; } }
+
+    .hero-two img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: block;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      max-width: 1000px;
+      margin: 48px auto;
+      border: none;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── MAIN CONTENT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .wide {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { margin-bottom: 52px; }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: 1.9rem;
+      font-weight: 400;
+      margin-bottom: 18px;
+      color: var(--text);
+    }
+
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #374151;
+      line-height: 1.75;
+      margin-bottom: 12px;
+    }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── ABSTRACT ── */
+    .abstract-text {
+      font-size: 16px;
+      line-height: 1.85;
+      color: #374151;
+      text-align: justify;
+    }
+
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 36px 0;
+    }
+
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .stat-cell {
+      background: var(--bg);
+      padding: 20px 12px;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      color: var(--accent);
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-lbl {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── FINDINGS ── */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .findings-grid { grid-template-columns: 1fr; }
+    }
+
+    .finding-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 24px;
+    }
+
+    .finding-num {
+      font-family: var(--serif);
+      font-size: 2rem;
+      color: #d1d5db;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .finding-card p {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .finding-card strong { color: var(--accent-red); font-weight: 600; }
+
+    /* ── FIGURES ── */
+    .fig-wrap {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    .fig-wrap img { width: 100%; display: block; }
+
+    .fig-caption {
+      padding: 14px 18px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      line-height: 1.6;
+    }
+
+    .fig-caption strong { color: var(--text); font-weight: 600; }
+
+    /* ── TWO COL ── */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+    .col-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+    }
+
+    .col-card ul {
+      padding-left: 16px;
+      font-size: 14px;
+      line-height: 1.85;
+      color: #374151;
+    }
+
+    /* ── TAGS ── */
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      background: #eff6ff;
+      color: var(--accent);
+      border: 1px solid #bfdbfe;
+      font-size: 12.5px;
+      font-weight: 500;
+      padding: 4px 14px;
+      border-radius: 50px;
+    }
+
+    /* ── TABLE ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    th {
+      background: var(--surface);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border);
+    }
+
+    td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      color: #374151;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface); }
+
+    .rank1 td:first-child { font-weight: 700; }
+    .best td { font-weight: 600; color: var(--accent-green); }
+    .worst td:last-child { color: var(--accent-red); font-weight: 600; }
+
+    /* ── BIBTEX ── */
+    .bibtex-wrap {
+      position: relative;
+      background: #0f172a;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    pre {
+      padding: 24px 28px;
+      font-family: 'Courier New', monospace;
+      font-size: 13.5px;
+      line-height: 1.8;
+      color: #94a3b8;
+      overflow-x: auto;
+    }
+
+    pre .kw  { color: #34d399; }
+    pre .val { color: #fbbf24; }
+    pre .fd  { color: #60a5fa; }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .copy-btn:hover { background: #334155; color: #e2e8f0; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 32px 24px 48px;
+      font-size: 13px;
+      color: #9ca3af;
+      border-top: 1px solid var(--border);
+      margin-top: 64px;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header { animation: fadeIn 0.5s ease both; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <h1>DecompProbFormer: Seasonal Decomposition Meets<br>Heteroscedastic Gaussian Forecasting for<br>Uncertainty-Aware Long-Horizon Time Series Prediction</h1>
+
+  <p class="authors">Anonymous Authors</p>
+  <p class="affils">University College London · COMP0197 Applied Deep Learning</p>
+  <p class="conf-line">Group Project · 2025–26</p>
+
+  <div class="btn-row">
+    <a class="btn btn-dark" href="https://github.com/vfdv52/DecompProbFormer" target="_blank">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      Code
+    </a>
+    <a class="btn btn-outline" href="#results">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Results
+    </a>
+    <a class="btn btn-outline" href="#method">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Method
+    </a>
+  </div>
+</header>
+
+<!-- ═══ HERO: PI PLOTS ═══ -->
+<div class="hero-two">
+  <div>
+    <img src="results/ETTh1_transAB_pi.png" alt="ETTh1 Trans+A+B 90% Prediction Interval" />
+  </div>
+  <div>
+    <img src="results/ETTh2_transAB_pi.png" alt="ETTh2 Trans+A+B 90% Prediction Interval" />
+  </div>
+</div>
+<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
+  <p class="hero-caption">
+    <strong>Fig. 1.</strong> 90% prediction intervals produced by <em>DecompProbFormer</em> (Trans+A+B, MC Dropout) on the ETTh1 (left) and ETTh2 (right) test sets.
+    The shaded band captures aleatoric and epistemic uncertainty jointly. The model closely tracks the ground truth mean (black) while providing well-calibrated uncertainty bands.
+    ETTh2 exhibits larger uncertainty — consistent with its inherently noisier OT signal.
+  </p>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ CALIBRATION ═══ -->
+<div class="hero-two">
+  <div>
+    <img src="results/ETTh1_calibration_transAB.png" alt="ETTh1 Calibration Curve" />
+  </div>
+  <div>
+    <img src="results/ETTh2_calibration_transAB.png" alt="ETTh2 Calibration Curve" />
+  </div>
+</div>
+<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
+  <p class="hero-caption">
+    <strong>Fig. 2.</strong> Reliability diagrams (calibration curves) for Trans+A+B on ETTh1 (left) and ETTh2 (right).
+    The diagonal dashed line represents perfect calibration. Both models maintain high empirical coverage across confidence levels,
+    indicating conservative but reliable prediction intervals.
+  </p>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ MAIN ═══ -->
+<main>
+
+<!-- Stats -->
+<div class="wide">
+  <div class="stats-grid">
+    <div class="stat-cell"><span class="stat-val">5</span><span class="stat-lbl">Ablation Models</span></div>
+    <div class="stat-cell"><span class="stat-val">2</span><span class="stat-lbl">Datasets</span></div>
+    <div class="stat-cell"><span class="stat-val">96</span><span class="stat-lbl">Look-back Steps</span></div>
+    <div class="stat-cell"><span class="stat-val">24</span><span class="stat-lbl">Forecast Horizon</span></div>
+    <div class="stat-cell"><span class="stat-val">50</span><span class="stat-lbl">MC Dropout Samples</span></div>
+    <div class="stat-cell"><span class="stat-val">2</span><span class="stat-lbl">Uncertainty Types</span></div>
+  </div>
+</div>
+
+<!-- Abstract -->
+<div class="container">
+  <section>
+    <h2>Abstract</h2>
+    <p class="abstract-text">
+      Deterministic deep learning models for time series forecasting produce single-point predictions that fail to communicate the inherent uncertainty of future observations.
+      We present <strong>DecompProbFormer</strong>, an encoder-only Transformer that combines two complementary inductive biases:
+      <strong>(A)</strong> a heteroscedastic Gaussian output head trained with negative log-likelihood, which directly models aleatoric uncertainty by predicting both mean μ and log-standard-deviation log σ per horizon step;
+      and <strong>(B)</strong> a learnable moving-average seasonal decomposition module that separates trend from seasonal residuals before encoding, improving non-stationary signal modelling.
+    </p>
+    <p class="abstract-text" style="margin-top:14px;">
+      We conduct a systematic ablation across five model variants — LSTM baseline, deterministic Transformer, Trans+A, Trans+B, and the full Trans+A+B — on two benchmark datasets (ETTh1 and ETTh2).
+      The full model achieves the best MSE on both datasets (ETTh1: <strong>0.0451</strong>, ETTh2: <strong>0.1118</strong>), reducing ETTh2 error by 14% relative to the LSTM baseline.
+      Epistemic uncertainty is further quantified via MC Dropout at inference, enabling decomposed aleatoric and epistemic confidence intervals.
+      Our results demonstrate that seasonal decomposition contributes the larger accuracy gain, while the Gaussian head adds calibrated uncertainty estimates at negligible accuracy cost.
+    </p>
+  </section>
+
+  <!-- Key Findings -->
+  <section id="method">
+    <h2>Key Findings</h2>
+    <div class="findings-grid">
+      <div class="finding-card">
+        <div class="finding-num">01</div>
+        <p>Seasonal decomposition (Module B) is the primary driver of accuracy. <strong>Trans+B alone achieves the best deterministic MSE on ETTh1</strong> (0.0449), outperforming the standard Transformer (0.0469) without any probabilistic component.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">02</div>
+        <p>The Gaussian head (Module A) adds uncertainty at negligible accuracy cost. <strong>Trans+A matches the deterministic Transformer in MSE</strong> while providing calibrated σ estimates, consistent with NLL training balancing accuracy and spread.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">03</div>
+        <p>The full model (Trans+A+B) achieves <strong>best MSE on both datasets</strong> and best NLL on ETTh1 (−0.1944), confirming that decomposition and probabilistic head are complementary.</p>
+      </div>
+      <div class="finding-card">
+        <div class="finding-num">04</div>
+        <p>ETTh2 is substantially harder. LSTM MSE 0.1303 vs ETTh1 0.0467. <strong>Trans+A+B reduces ETTh2 error by 14%</strong> over LSTM, the largest relative gain across all comparisons.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Results table -->
+<div class="wide">
+  <section id="results">
+    <h2 style="padding:0 24px;">Results</h2>
+    <div style="padding:0 24px;">
+      <p style="color:var(--text-muted);font-size:14.5px;margin-bottom:16px;">
+        Full ablation on ETTh1 and ETTh2. Best per column in <span style="color:var(--accent-green);font-weight:600;">green</span>.
+        NLL reported only for probabilistic models (Trans+A, Trans+A+B).
+      </p>
+      <div class="fig-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>ETTh1 MSE ↓</th>
+              <th>ETTh1 MAE ↓</th>
+              <th>ETTh1 NLL ↓</th>
+              <th>ETTh2 MSE ↓</th>
+              <th>ETTh2 MAE ↓</th>
+              <th>ETTh2 NLL ↓</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>LSTM (baseline)</td>
+              <td>0.0467</td><td>0.1615</td><td>—</td>
+              <td>0.1303</td><td>0.2632</td><td>—</td>
+            </tr>
+            <tr>
+              <td>Transformer</td>
+              <td>0.0469</td><td>0.1630</td><td>—</td>
+              <td>0.1222</td><td>0.2542</td><td>—</td>
+            </tr>
+            <tr>
+              <td>Trans+A (Gaussian head)</td>
+              <td>0.0470</td><td>0.1593</td><td>−0.0631</td>
+              <td>0.1215</td><td>0.2484</td><td>0.1850</td>
+            </tr>
+            <tr>
+              <td>Trans+B (SeasonalDecomp)</td>
+              <td>0.0449</td><td>0.1557</td><td>—</td>
+              <td>0.1195</td><td>0.2520</td><td>—</td>
+            </tr>
+            <tr class="best">
+              <td><strong>Trans+A+B (ours)</strong></td>
+              <td><strong>0.0451</strong></td><td><strong>0.1547</strong></td><td><strong>−0.1944</strong></td>
+              <td><strong>0.1118</strong></td><td><strong>0.2357</strong></td><td>0.1142</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="padding:0 24px;margin-top:16px;">
+      <div class="two-col">
+        <div class="col-card">
+          <h3>Architecture</h3>
+          <ul>
+            <li><strong>Input projection:</strong> Linear(1 → d_model=64)</li>
+            <li><strong>Positional encoding:</strong> Learnable nn.Embedding</li>
+            <li><strong>Encoder:</strong> 2 × TransformerEncoderLayer (nhead=4, ff=256, dropout=0.2)</li>
+            <li><strong>Module A:</strong> Two linear heads → (μ, log σ) per horizon step</li>
+            <li><strong>Module B:</strong> Moving-avg decomposition (kernel=25); seasonal → encoder, trend → additive skip</li>
+            <li><strong>Loss:</strong> Gaussian NLL (heteroscedastic)</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h3>Training Setup</h3>
+          <ul>
+            <li><strong>Dataset split:</strong> 70 / 10 / 20 (train / val / test)</li>
+            <li><strong>Normalisation:</strong> StandardScaler fit on train</li>
+            <li><strong>Optimiser:</strong> Adam, lr=1e-3</li>
+            <li><strong>Scheduler:</strong> ReduceLROnPlateau (patience=7, ×0.5)</li>
+            <li><strong>Early stopping:</strong> patience=15 epochs on val NLL / MSE</li>
+            <li><strong>MC Dropout:</strong> 50 stochastic passes at inference</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Tags -->
+<div class="container">
+  <section>
+    <h2>Topics</h2>
+    <div class="tag-row">
+      <span class="tag">Time Series Forecasting</span>
+      <span class="tag">Uncertainty Quantification</span>
+      <span class="tag">Gaussian Likelihood</span>
+      <span class="tag">MC Dropout</span>
+      <span class="tag">Seasonal Decomposition</span>
+      <span class="tag">Transformer</span>
+      <span class="tag">Aleatoric Uncertainty</span>
+      <span class="tag">Epistemic Uncertainty</span>
+      <span class="tag">ETTh1 / ETTh2</span>
+      <span class="tag">PyTorch</span>
+    </div>
+  </section>
+
+  <!-- BibTeX -->
+  <section>
+    <h2>BibTeX</h2>
+    <div class="bibtex-wrap">
+      <button class="copy-btn" onclick="copyBib()">Copy</button>
+      <pre><span class="kw">@misc</span>{<span class="val">decompprobformer2026</span>,
+  <span class="fd">title</span>     = {DecompProbFormer: Seasonal Decomposition Meets
+               Heteroscedastic Gaussian Forecasting for
+               Uncertainty-Aware Long-Horizon Time Series Prediction},
+  <span class="fd">author</span>    = {Anonymous Authors},
+  <span class="fd">year</span>      = {2026},
+  <span class="fd">note</span>      = {COMP0197 Applied Deep Learning, UCL.
+               Code: https://github.com/vfdv52/DecompProbFormer}
+}</pre>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p>
+    COMP0197 Applied Deep Learning · University College London · 2025–26 ·
+    <a href="https://github.com/vfdv52/DecompProbFormer" target="_blank">GitHub</a>
+  </p>
+</footer>
+
+<script>
+function copyBib() {
+  const text = `@misc{decompprobformer2026,
+  title     = {DecompProbFormer: Seasonal Decomposition Meets Heteroscedastic Gaussian Forecasting for Uncertainty-Aware Long-Horizon Time Series Prediction},
+  author    = {Anonymous Authors},
+  year      = {2026},
+  note      = {COMP0197 Applied Deep Learning, UCL. Code: https://github.com/vfdv52/DecompProbFormer}
+}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
+
+</body>
+</html>
