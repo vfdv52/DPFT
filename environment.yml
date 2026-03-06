@@ -1,0 +1,32 @@
+name: comp0197-pt
+channels:
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.12.12
+  - pytorch=2.10.0
+  - numpy=2.3.5
+  - pillow=12.0.0
+  - pip:
+    - pandas==3.0.1
+    - scikit-learn==1.8.0
+
+# -----------------------------------------------------------------------
+# Reproduction steps (micromamba):
+#
+#   1. Create environment (skip if comp0197-pt already exists):
+#        micromamba env create -f environment.yml
+#
+#   2. If comp0197-pt already exists, install the two extra packages only:
+#        micromamba run -n comp0197-pt pip install pandas==3.0.1 scikit-learn==1.8.0
+#
+#   3. Train all models (downloads data automatically):
+#        micromamba run -n comp0197-pt bash run.sh
+#
+#   4. Evaluate and generate plots:
+#        micromamba run -n comp0197-pt python test.py
+#
+# Extra packages used (2 of 3 allowed):
+#   pandas==3.0.1       — CSV data loading
+#   scikit-learn==1.8.0 — StandardScaler normalisation
+# -----------------------------------------------------------------------

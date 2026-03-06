@@ -1,0 +1,27 @@
+# Auto-downloaded data (train.py fetches automatically)
+data/
+
+# Generated outputs
+results/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Optional / non-default model weights (not part of default ablation)
+saved_models/gnn_*.pt
+saved_models/informer_*.pt
+saved_models/gated_*.pt
+
+# Internal planning files (not for submission)
+prepare.md
+checklist.md
+hparam_search.sh
+
+# Assignment PDF (UCL copyright, not for redistribution)
+*.pdf
+
+# OS / editor artefacts
+.DS_Store
+*.swp
