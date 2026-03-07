@@ -1,4 +1,4 @@
-# DecompProbFormer: Seasonal Decomposition Meets Heteroscedastic Gaussian Forecasting for Uncertainty-Aware Long-Horizon Time Series Prediction
+# DPFT: A Framework for Decomposed Probabilistic Forecasting with Transformers
 
 COMP0197 Applied Deep Learning · University College London · Group Project 2025–26
 
