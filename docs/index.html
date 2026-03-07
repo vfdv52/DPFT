@@ -522,7 +522,7 @@
     </p>
     <p class="abstract-text" style="margin-top:14px;">
       We conduct a systematic ablation across seven model variants — GNN, Informer, LSTM baseline, deterministic Transformer, Transformer+Gaussian Head, Transformer+SeasonalDecomp, and the full Ours — on two benchmark datasets (ETTh1 and ETTh2).
-      The full model achieves the best MSE on both datasets (ETTh1: <strong>0.0455</strong>, ETTh2: <strong>0.1149</strong>), reducing ETTh2 error by 5% relative to the LSTM baseline.
+      The full model achieves the best MSE on both datasets (ETTh1: <strong>0.0444</strong>, ETTh2: <strong>0.1143</strong>), reducing ETTh2 error by 12% relative to the LSTM baseline.
       Epistemic uncertainty is further quantified via MC Dropout at inference, enabling decomposed aleatoric and epistemic confidence intervals.
       Our results demonstrate that seasonal decomposition contributes the larger accuracy gain, while the Gaussian head adds calibrated uncertainty estimates at negligible accuracy cost.
     </p>
@@ -534,7 +534,7 @@
     <div class="findings-grid">
       <div class="finding-card">
         <div class="finding-num">01</div>
-        <p>Seasonal decomposition (Module B) is the primary driver of accuracy. <strong>Transformer+SeasonalDecomp alone achieves the best deterministic MSE on ETTh1</strong> (0.0456), outperforming the standard Transformer (0.0463) without any probabilistic component.</p>
+        <p>Seasonal decomposition (Module B) is the primary driver of accuracy. <strong>Transformer+SeasonalDecomp alone achieves the best deterministic MSE on ETTh1</strong> (0.0456), outperforming the standard Transformer (0.0469) without any probabilistic component.</p>
       </div>
       <div class="finding-card">
         <div class="finding-num">02</div>
@@ -542,11 +542,11 @@
       </div>
       <div class="finding-card">
         <div class="finding-num">03</div>
-        <p>The full model (Ours) achieves <strong>best MSE on both datasets</strong> and best NLL on ETTh1 (−0.1986), confirming that decomposition and probabilistic head are complementary.</p>
+        <p>The full model (Ours) achieves <strong>best MSE on both datasets</strong> and best NLL on ETTh1 (−0.1922), confirming that decomposition and probabilistic head are complementary.</p>
       </div>
       <div class="finding-card">
         <div class="finding-num">04</div>
-        <p>ETTh2 is substantially harder. LSTM MSE 0.1208 vs ETTh1 0.0473. <strong>Ours reduces ETTh2 error by 5%</strong> over LSTM, the largest relative gain across all comparisons.</p>
+        <p>ETTh2 is substantially harder. LSTM MSE 0.1303 vs ETTh1 0.0467. <strong>Ours reduces ETTh2 error by 12%</strong> over LSTM, the largest relative gain across all comparisons.</p>
       </div>
     </div>
   </section>
@@ -587,18 +587,18 @@
             </tr>
             <tr>
               <td>LSTM</td>
-              <td>0.0473</td><td>0.1581</td><td>—</td>
-              <td>0.1208</td><td>0.2485</td><td>—</td>
+              <td>0.0467</td><td>0.1615</td><td>—</td>
+              <td>0.1303</td><td>0.2632</td><td>—</td>
             </tr>
             <tr>
               <td>Transformer</td>
-              <td>0.0463</td><td>0.1602</td><td>—</td>
-              <td>0.1175</td><td>0.2483</td><td>—</td>
+              <td>0.0469</td><td>0.1630</td><td>—</td>
+              <td>0.1222</td><td>0.2542</td><td>—</td>
             </tr>
             <tr>
               <td>Transformer+Gaussian Head</td>
-              <td>0.0473</td><td>0.1630</td><td>−0.1363</td>
-              <td>0.1209</td><td>0.2512</td><td>0.1951</td>
+              <td>0.0470</td><td>0.1593</td><td>−0.0631</td>
+              <td>0.1215</td><td>0.2484</td><td>0.1850</td>
             </tr>
             <tr>
               <td>Transformer+SeasonalDecomp</td>
@@ -607,8 +607,8 @@
             </tr>
             <tr class="best">
               <td><strong>Ours</strong></td>
-              <td><strong>0.0455</strong></td><td><strong>0.1565</strong></td><td><strong>−0.1986</strong></td>
-              <td><strong>0.1149</strong></td><td><strong>0.2408</strong></td><td><strong>0.1413</strong></td>
+              <td><strong>0.0444</strong></td><td><strong>0.1535</strong></td><td><strong>−0.1922</strong></td>
+              <td><strong>0.1143</strong></td><td><strong>0.2393</strong></td><td><strong>0.1322</strong></td>
             </tr>
           </tbody>
         </table>
