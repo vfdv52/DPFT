@@ -115,10 +115,9 @@ def collect_mc_dropout_preds(model, loader, n_samples=MC_SAMPLES):
     model.train()   # keep dropout active
 
     all_x, all_y = [], []
-    with torch.no_grad():
-        for x, y in loader:
-            all_x.append(x.to(device))
-            all_y.append(y.numpy())
+    for x, y in loader:
+        all_x.append(x)           # keep on CPU; move to device per forward pass
+        all_y.append(y.numpy())
 
     sample_mus    = []   # list of (N_total, pred_len) arrays
     sample_vars   = []   # aleatoric variance per sample
@@ -127,7 +126,7 @@ def collect_mc_dropout_preds(model, loader, n_samples=MC_SAMPLES):
         batch_mus, batch_vars = [], []
         with torch.no_grad():
             for x in all_x:
-                mu, log_sigma = model(x)
+                mu, log_sigma = model(x.to(device))
                 sigma = torch.exp(torch.clamp(log_sigma, -6.0, 6.0))
                 batch_mus.append(mu.cpu().numpy())
                 batch_vars.append((sigma ** 2).cpu().numpy())
@@ -244,13 +243,6 @@ def plot_calibration(mu, sigma, y_true, title, save_path):
     from utils import coverage as cov_fn
     alphas    = np.linspace(0.05, 0.95, 19)
     coverages = np.array([cov_fn(mu, sigma, y_true, alpha=a) for a in alphas])
-
-    # Map both axes [0,1] onto pixel space
-    def ax_to_px_x(v):
-        return int(_PAD_L + v * _PLOT_W)
-
-    def ax_to_px_y(v):
-        return int(_PAD_T + _PLOT_H - v * _PLOT_H)
 
     sz = 500
     img  = Image.new('RGB', (sz, sz), _WHITE)
