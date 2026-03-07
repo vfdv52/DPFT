@@ -21,6 +21,9 @@ checklist.md
 workflow.md
 hparam_search.sh
 
+# Report folder (submitted separately, not for public repo)
+report/
+
 # Assignment PDF (UCL copyright, not for redistribution)
 *.pdf
 
