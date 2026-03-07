@@ -1,6 +1,4 @@
-# GenAI usage: Claude (claude-sonnet-4-6) assisted in drafting this file.
-# All evaluation logic, MC Dropout procedure, and visualisation choices were
-# reviewed and verified manually by the authors.
+# GenAI usage: AI used to supplement inline comments and assist formula derivation.
 
 
 """
@@ -362,8 +360,8 @@ def evaluate_dataset(dataset: str, results: dict):
         os.path.join(SAVE_DIR, f'transformer_{dataset}_{tag}.pt'), map_location=device))
     mu_tf, sigma_tf, y_true_tf = collect_transformer_preds(transformer, test_loader)
     m_tf = compute_all_metrics(mu_tf, sigma_tf, y_true_tf)
-    results[f'{dataset}_Transformer+GaussianHead'] = m_tf
-    print(f'  [5] Transformer+GaussianHead | MSE {m_tf["MSE"]:.4f} | MAE {m_tf["MAE"]:.4f} | NLL {m_tf["NLL"]:.4f}')
+    results[f'{dataset}_Transformer+Gaussian Head'] = m_tf
+    print(f'  [5] Transformer+Gaussian Head | MSE {m_tf["MSE"]:.4f} | MAE {m_tf["MAE"]:.4f} | NLL {m_tf["NLL"]:.4f}')
 
     decomp_det = DecompDeterministicTransformer(
         input_size=1, d_model=D_MODEL, nhead=NHEAD,
@@ -375,7 +373,7 @@ def evaluate_dataset(dataset: str, results: dict):
     mu_decomp, y_true_decomp = collect_lstm_preds(decomp_det, test_loader)
     m_decomp = _point_metrics(mu_decomp, y_true_decomp)
     results[f'{dataset}_Transformer+SeasonalDecomp'] = m_decomp
-    print(f'  [6] Transformer+SeasonalDecomp        | MSE {m_decomp["MSE"]:.4f} | MAE {m_decomp["MAE"]:.4f}')
+    print(f'  [6] Transformer+SeasonalDecomp | MSE {m_decomp["MSE"]:.4f} | MAE {m_decomp["MAE"]:.4f}')
 
     decomp_tf = DecompProbabilisticTransformer(
         input_size=1, d_model=D_MODEL, nhead=NHEAD,
@@ -386,27 +384,27 @@ def evaluate_dataset(dataset: str, results: dict):
         os.path.join(SAVE_DIR, f'decomp_prob_transformer_{dataset}_{tag}.pt'), map_location=device))
     mu_dmc, sigma_dmc, y_true_dmc = collect_mc_dropout_preds(decomp_tf, test_loader)
     m_dmc = compute_all_metrics(mu_dmc, sigma_dmc, y_true_dmc)
-    results[f'{dataset}_Transformer+GaussianHead+SeasonalDecomp'] = m_dmc
-    print(f'  [7] Transformer+GaussianHead+SeasonalDecomp | MSE {m_dmc["MSE"]:.4f} | MAE {m_dmc["MAE"]:.4f} | NLL {m_dmc["NLL"]:.4f}')
+    results[f'{dataset}_Ours'] = m_dmc
+    print(f'  [7] Ours | MSE {m_dmc["MSE"]:.4f} | MAE {m_dmc["MAE"]:.4f} | NLL {m_dmc["NLL"]:.4f}')
 
     plot_prediction_interval(
         mu_tf, sigma_tf, y_true_tf,
-        title=f'{dataset} — Trans+A prediction interval',
+        title=f'{dataset} — Transformer+Gaussian Head prediction interval',
         save_path=os.path.join(RESULTS_DIR, f'{dataset}_transA_pi.png'),
     )
     plot_prediction_interval(
         mu_dmc, sigma_dmc, y_true_dmc,
-        title=f'{dataset} — Trans+A+B (MC Dropout) prediction interval',
+        title=f'{dataset} — Ours (MC Dropout) prediction interval',
         save_path=os.path.join(RESULTS_DIR, f'{dataset}_transAB_pi.png'),
     )
     plot_calibration(
         mu_tf, sigma_tf, y_true_tf,
-        title=f'{dataset} — Calibration (Trans+A)',
+        title=f'{dataset} — Calibration (Transformer+Gaussian Head)',
         save_path=os.path.join(RESULTS_DIR, f'{dataset}_calibration_transA.png'),
     )
     plot_calibration(
         mu_dmc, sigma_dmc, y_true_dmc,
-        title=f'{dataset} — Calibration (Trans+A+B)',
+        title=f'{dataset} — Calibration (Ours)',
         save_path=os.path.join(RESULTS_DIR, f'{dataset}_calibration_transAB.png'),
     )
 

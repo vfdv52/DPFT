@@ -2,6 +2,8 @@
 
 COMP0197 Applied Deep Learning · University College London · Group Project 2025–26
 
+**[Project Page](https://vfdv52.github.io/DecompProbFormer/)**
+
 **Task**: Predict future values of a time series and quantify the associated uncertainty using a probability distribution output.
 
 ---
@@ -13,9 +15,9 @@ This project implements and evaluates probabilistic forecasting models on the ET
 **Models** (ablation hierarchy):
 - `DeterministicLSTM` — deterministic baseline, trained with MSE loss
 - `DeterministicTransformer` — encoder-only Transformer, trained with MSE loss
-- `ProbabilisticTransformer` (Trans+A) — Transformer with Gaussian output head, trained with NLL loss
-- `DecompDeterministicTransformer` (Trans+B) — Transformer with seasonal decomposition, trained with MSE loss
-- `DecompProbabilisticTransformer` (Trans+A+B) — Transformer with Gaussian head + seasonal decomposition, trained with NLL loss; supports MC Dropout for epistemic uncertainty
+- `ProbabilisticTransformer` (Transformer+Gaussian Head) — Transformer with Gaussian output head, trained with NLL loss
+- `DecompDeterministicTransformer` (Transformer+SeasonalDecomp) — Transformer with seasonal decomposition, trained with MSE loss
+- `DecompProbabilisticTransformer` (Ours) — Transformer with Gaussian head + seasonal decomposition, trained with NLL loss; supports MC Dropout for epistemic uncertainty
 
 **Datasets**: ETTh1 and ETTh2 (hourly, univariate OT column), auto-downloaded from GitHub.
 
@@ -108,7 +110,7 @@ Encoder-only Transformer for point forecasting. Ablation baseline isolating the 
 - **Output**: `(B, pred_len=24)`
 - **Loss**: MSE
 
-### `ProbabilisticTransformer` (Trans+A)
+### `ProbabilisticTransformer` (Transformer+Gaussian Head)
 
 Encoder-only Transformer with a Gaussian output head. Adds aleatoric uncertainty estimation over the deterministic Transformer.
 
@@ -116,14 +118,14 @@ Encoder-only Transformer with a Gaussian output head. Adds aleatoric uncertainty
 - **Loss**: Gaussian NLL
 - **Architecture**: Linear projection → learnable positional embedding → `nn.TransformerEncoder` → last-token pooling → two linear heads (μ, log σ)
 
-### `DecompDeterministicTransformer` (Trans+B)
+### `DecompDeterministicTransformer` (Transformer+SeasonalDecomp)
 
 Transformer with trend-seasonal decomposition. Isolates the contribution of the decomposition module.
 
 - **Decomposition**: moving average trend extraction; seasonal = input − trend
 - **Loss**: MSE
 
-### `DecompProbabilisticTransformer` (Trans+A+B)
+### `DecompProbabilisticTransformer` (Ours)
 
 Full model combining the Gaussian head (A) and seasonal decomposition (B).
 
@@ -158,11 +160,13 @@ Full model combining the Gaussian head (A) and seasonal decomposition (B).
 
 | Model | ETTh1 MSE | ETTh1 MAE | ETTh1 NLL | ETTh2 MSE | ETTh2 MAE | ETTh2 NLL |
 |---|---|---|---|---|---|---|
+| GNN | 0.0551 | 0.1747 | — | 0.2945 | 0.4236 | — |
+| Informer | 0.0527 | 0.1808 | — | 0.1251 | 0.2570 | — |
 | LSTM | 0.0467 | 0.1615 | — | 0.1303 | 0.2632 | — |
 | Transformer | 0.0469 | 0.1630 | — | 0.1222 | 0.2542 | — |
-| Trans+A (Gaussian) | 0.0470 | 0.1593 | -0.0631 | 0.1215 | 0.2484 | 0.1850 |
-| Trans+B (SeasonalDecomp) | 0.0449 | 0.1557 | — | 0.1195 | 0.2520 | — |
-| Trans+A+B (Full, MC Dropout) | 0.0451 | 0.1547 | -0.1944 | 0.1118 | 0.2357 | 0.1142 |
+| Transformer+Gaussian Head | 0.0470 | 0.1593 | -0.0631 | 0.1215 | 0.2484 | 0.1850 |
+| Transformer+SeasonalDecomp | 0.0449 | 0.1557 | — | 0.1195 | 0.2520 | — |
+| **Ours** | **0.0444** | **0.1535** | **-0.1922** | **0.1143** | **0.2393** | 0.1322 |
 
 ---
 
@@ -172,10 +176,10 @@ Full model combining the Gaussian head (A) and seasonal decomposition (B).
 
 | File | Description |
 |---|---|
-| `{dataset}_transA_pi.png` | Trans+A predicted mean ± 90% PI (deterministic inference) |
-| `{dataset}_transAB_pi.png` | Trans+A+B predicted mean ± 90% PI (MC Dropout) |
-| `{dataset}_calibration_transA.png` | Reliability diagram — Trans+A |
-| `{dataset}_calibration_transAB.png` | Reliability diagram — Trans+A+B |
+| `{dataset}_transA_pi.png` | Transformer+Gaussian Head predicted mean ± 90% PI (deterministic inference) |
+| `{dataset}_transAB_pi.png` | Ours predicted mean ± 90% PI (MC Dropout) |
+| `{dataset}_calibration_transA.png` | Reliability diagram — Transformer+Gaussian Head |
+| `{dataset}_calibration_transAB.png` | Reliability diagram — Ours |
 
 ---
 

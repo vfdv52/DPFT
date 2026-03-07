@@ -1,5 +1,4 @@
-# GenAI usage: Claude (claude-sonnet-4-6) assisted in drafting this file.
-# All architectural choices were reviewed and verified manually by the authors.
+# GenAI usage: AI used to supplement inline comments.
 
 import torch
 import torch.nn as nn

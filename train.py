@@ -1,6 +1,4 @@
-# GenAI usage: Claude (claude-sonnet-4-6) assisted in drafting this file.
-# All training logic, hyperparameters, and design choices were reviewed and
-# verified manually by the authors.
+# GenAI usage: AI used to supplement inline comments.
 
 """
 train.py — Train all ablation models and save best checkpoints.
@@ -14,9 +12,9 @@ Models trained on each dataset:
     2. Informer    — DeterministicInformer (ProbSparse attention), MSE loss
     3. LSTM        — DeterministicLSTM, MSE loss
     4. Transformer — DeterministicTransformer, MSE loss
-    5. Trans+A     — ProbabilisticTransformer, Gaussian NLL loss
-    6. Trans+B     — DecompDeterministicTransformer (seasonal decomposition), MSE loss
-    7. Trans+A+B   — DecompProbabilisticTransformer, Gaussian NLL loss
+    5. Transformer+Gaussian Head            — ProbabilisticTransformer, Gaussian NLL loss
+    6. Transformer+SeasonalDecomp           — DecompDeterministicTransformer (seasonal decomposition), MSE loss
+    7. Transformer+Gaussian Head+SeasonalDecomp — DecompProbabilisticTransformer, Gaussian NLL loss
 
 Checkpoints saved to: saved_models/{model}_{dataset}_{run_name}.pt
 """

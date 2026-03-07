@@ -460,15 +460,15 @@
 <!-- ═══ HERO: PI PLOTS ═══ -->
 <div class="hero-two">
   <div>
-    <img src="img/ETTh1_transAB_pi.png" alt="ETTh1 Trans+A+B 90% Prediction Interval" />
+    <img src="img/ETTh1_transAB_pi.png" alt="ETTh1 Ours 90% Prediction Interval" />
   </div>
   <div>
-    <img src="img/ETTh2_transAB_pi.png" alt="ETTh2 Trans+A+B 90% Prediction Interval" />
+    <img src="img/ETTh2_transAB_pi.png" alt="ETTh2 Ours 90% Prediction Interval" />
   </div>
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 1.</strong> 90% prediction intervals produced by <em>DecompProbFormer</em> (Trans+A+B, MC Dropout) on the ETTh1 (left) and ETTh2 (right) test sets.
+    <strong>Fig. 1.</strong> 90% prediction intervals produced by <em>DecompProbFormer</em> (Ours, MC Dropout) on the ETTh1 (left) and ETTh2 (right) test sets.
     The shaded band captures aleatoric and epistemic uncertainty jointly. The model closely tracks the ground truth mean (black) while providing well-calibrated uncertainty bands.
     ETTh2 exhibits larger uncertainty — consistent with its inherently noisier OT signal.
   </p>
@@ -487,7 +487,7 @@
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 2.</strong> Reliability diagrams (calibration curves) for Trans+A+B on ETTh1 (left) and ETTh2 (right).
+    <strong>Fig. 2.</strong> Reliability diagrams (calibration curves) for Ours on ETTh1 (left) and ETTh2 (right).
     The diagonal dashed line represents perfect calibration. Both models maintain high empirical coverage across confidence levels,
     indicating conservative but reliable prediction intervals.
   </p>
@@ -501,7 +501,7 @@
 <!-- Stats -->
 <div class="wide">
   <div class="stats-grid">
-    <div class="stat-cell"><span class="stat-val">5</span><span class="stat-lbl">Ablation Models</span></div>
+    <div class="stat-cell"><span class="stat-val">7</span><span class="stat-lbl">Ablation Models</span></div>
     <div class="stat-cell"><span class="stat-val">2</span><span class="stat-lbl">Datasets</span></div>
     <div class="stat-cell"><span class="stat-val">96</span><span class="stat-lbl">Look-back Steps</span></div>
     <div class="stat-cell"><span class="stat-val">24</span><span class="stat-lbl">Forecast Horizon</span></div>
@@ -521,8 +521,8 @@
       and <strong>(B)</strong> a learnable moving-average seasonal decomposition module that separates trend from seasonal residuals before encoding, improving non-stationary signal modelling.
     </p>
     <p class="abstract-text" style="margin-top:14px;">
-      We conduct a systematic ablation across five model variants — LSTM baseline, deterministic Transformer, Trans+A, Trans+B, and the full Trans+A+B — on two benchmark datasets (ETTh1 and ETTh2).
-      The full model achieves the best MSE on both datasets (ETTh1: <strong>0.0451</strong>, ETTh2: <strong>0.1118</strong>), reducing ETTh2 error by 14% relative to the LSTM baseline.
+      We conduct a systematic ablation across seven model variants — GNN, Informer, LSTM baseline, deterministic Transformer, Transformer+Gaussian Head, Transformer+SeasonalDecomp, and the full Ours — on two benchmark datasets (ETTh1 and ETTh2).
+      The full model achieves the best MSE on both datasets (ETTh1: <strong>0.0444</strong>, ETTh2: <strong>0.1143</strong>), reducing ETTh2 error by 12% relative to the LSTM baseline.
       Epistemic uncertainty is further quantified via MC Dropout at inference, enabling decomposed aleatoric and epistemic confidence intervals.
       Our results demonstrate that seasonal decomposition contributes the larger accuracy gain, while the Gaussian head adds calibrated uncertainty estimates at negligible accuracy cost.
     </p>
@@ -534,19 +534,19 @@
     <div class="findings-grid">
       <div class="finding-card">
         <div class="finding-num">01</div>
-        <p>Seasonal decomposition (Module B) is the primary driver of accuracy. <strong>Trans+B alone achieves the best deterministic MSE on ETTh1</strong> (0.0449), outperforming the standard Transformer (0.0469) without any probabilistic component.</p>
+        <p>Seasonal decomposition (Module B) is the primary driver of accuracy. <strong>Transformer+SeasonalDecomp alone achieves the best deterministic MSE on ETTh1</strong> (0.0449), outperforming the standard Transformer (0.0469) without any probabilistic component.</p>
       </div>
       <div class="finding-card">
         <div class="finding-num">02</div>
-        <p>The Gaussian head (Module A) adds uncertainty at negligible accuracy cost. <strong>Trans+A matches the deterministic Transformer in MSE</strong> while providing calibrated σ estimates, consistent with NLL training balancing accuracy and spread.</p>
+        <p>The Gaussian head (Module A) adds uncertainty at negligible accuracy cost. <strong>Transformer+Gaussian Head matches the deterministic Transformer in MSE</strong> while providing calibrated σ estimates, consistent with NLL training balancing accuracy and spread.</p>
       </div>
       <div class="finding-card">
         <div class="finding-num">03</div>
-        <p>The full model (Trans+A+B) achieves <strong>best MSE on both datasets</strong> and best NLL on ETTh1 (−0.1944), confirming that decomposition and probabilistic head are complementary.</p>
+        <p>The full model (Ours) achieves <strong>best MSE on both datasets</strong> and best NLL on ETTh1 (−0.1922), confirming that decomposition and probabilistic head are complementary.</p>
       </div>
       <div class="finding-card">
         <div class="finding-num">04</div>
-        <p>ETTh2 is substantially harder. LSTM MSE 0.1303 vs ETTh1 0.0467. <strong>Trans+A+B reduces ETTh2 error by 14%</strong> over LSTM, the largest relative gain across all comparisons.</p>
+        <p>ETTh2 is substantially harder. LSTM MSE 0.1303 vs ETTh1 0.0467. <strong>Ours reduces ETTh2 error by 12%</strong> over LSTM, the largest relative gain across all comparisons.</p>
       </div>
     </div>
   </section>
@@ -559,7 +559,7 @@
     <div style="padding:0 24px;">
       <p style="color:var(--text-muted);font-size:14.5px;margin-bottom:16px;">
         Full ablation on ETTh1 and ETTh2. Best per column in <span style="color:var(--accent-green);font-weight:600;">green</span>.
-        NLL reported only for probabilistic models (Trans+A, Trans+A+B).
+        NLL reported only for probabilistic models (Transformer+Gaussian Head, Ours).
       </p>
       <div class="fig-wrap">
         <table>
@@ -576,7 +576,17 @@
           </thead>
           <tbody>
             <tr>
-              <td>LSTM (baseline)</td>
+              <td>GNN</td>
+              <td>0.0551</td><td>0.1747</td><td>—</td>
+              <td>0.2945</td><td>0.4236</td><td>—</td>
+            </tr>
+            <tr>
+              <td>Informer</td>
+              <td>0.0527</td><td>0.1808</td><td>—</td>
+              <td>0.1251</td><td>0.2570</td><td>—</td>
+            </tr>
+            <tr>
+              <td>LSTM</td>
               <td>0.0467</td><td>0.1615</td><td>—</td>
               <td>0.1303</td><td>0.2632</td><td>—</td>
             </tr>
@@ -586,19 +596,19 @@
               <td>0.1222</td><td>0.2542</td><td>—</td>
             </tr>
             <tr>
-              <td>Trans+A (Gaussian head)</td>
+              <td>Transformer+Gaussian Head</td>
               <td>0.0470</td><td>0.1593</td><td>−0.0631</td>
               <td>0.1215</td><td>0.2484</td><td>0.1850</td>
             </tr>
             <tr>
-              <td>Trans+B (SeasonalDecomp)</td>
+              <td>Transformer+SeasonalDecomp</td>
               <td>0.0449</td><td>0.1557</td><td>—</td>
               <td>0.1195</td><td>0.2520</td><td>—</td>
             </tr>
             <tr class="best">
-              <td><strong>Trans+A+B (ours)</strong></td>
-              <td><strong>0.0451</strong></td><td><strong>0.1547</strong></td><td><strong>−0.1944</strong></td>
-              <td><strong>0.1118</strong></td><td><strong>0.2357</strong></td><td>0.1142</td>
+              <td><strong>Ours</strong></td>
+              <td><strong>0.0444</strong></td><td><strong>0.1535</strong></td><td><strong>−0.1922</strong></td>
+              <td><strong>0.1143</strong></td><td><strong>0.2393</strong></td><td><strong>0.1322</strong></td>
             </tr>
           </tbody>
         </table>

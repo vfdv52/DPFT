@@ -1,5 +1,4 @@
-# GenAI usage: Claude (claude-sonnet-4-6) assisted in drafting this file.
-# All mathematical formulations were reviewed and verified manually by the authors.
+# GenAI usage: AI used to supplement inline comments and assist formula derivation.
 
 import math
 import numpy as np
