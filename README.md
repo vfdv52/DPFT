@@ -27,8 +27,8 @@ This project implements and evaluates probabilistic forecasting models on the ET
 
 ```
 CW2/
-├── train.py                  # Entry point: download data, train all models, save weights
-├── test.py                   # Entry point: load weights, evaluate, generate plots
+├── train.py                  # Entry point: train all ablation models, save checkpoints
+├── test.py                   # Entry point: evaluate saved models, generate plots
 ├── run.sh                    # One-shot script: trains then evaluates with configurable flags
 │
 ├── models/
@@ -43,14 +43,19 @@ CW2/
 │   ├── data.py               # Data download, TimeSeriesDataset, get_dataloaders()
 │   └── metrics.py            # gaussian_nll (loss), NLL, CRPS, coverage, compute_all_metrics()
 │
-├── data/                     # Auto-created; stores downloaded CSV files
-├── saved_models/             # Auto-created by train.py; stores .pt weight files
-├── results/                  # Auto-created by test.py; stores output plots and .npy arrays
+├── saved_models/             # Ablation model weights (5 models × 2 datasets)
+│                             # GNN/Informer weights excluded via .gitignore
+├── results/                  # Output plots (PNG only; .log and .npy excluded via .gitignore)
+│
+├── docs/                     # GitHub Pages project page
+│   ├── index.html
+│   └── img/                  # Hero images used by the project page
 │
 ├── environment.yml           # Micromamba environment spec
-├── checklist.md              # Compliance checklist against assignment requirements
+├── .gitignore
 └── README.md                 # This file
 ```
+> `data/` is not tracked — CSVs are auto-downloaded at runtime by `train.py`.
 
 ---
 
