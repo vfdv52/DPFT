@@ -474,31 +474,31 @@
 
 <hr class="divider">
 
+<!-- ═══ INTRO FIGURE ═══ -->
+<div class="hero-fig">
+  <img src="img/intro.png" alt="Motivation: ground truth, predictive intervals, and calibration" />
+</div>
+<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
+  <p class="hero-caption">
+    <strong>Fig. 2.</strong> Motivation and calibration on ETTh1.
+    <em>(a)</em> Raw OT time series with trend and seasonal components.
+    <em>(b)</em> 90% prediction intervals: Transformer and Gaussian Head (σ̂, deterministic) vs. DPFT (σ̄, MC Dropout).
+    <em>(c)</em> Reliability diagrams: DPFT tracks the perfect-calibration diagonal more closely, confirming that MC Dropout adds epistemic coverage beyond the Gaussian head alone.
+  </p>
+</div>
+
+<hr class="divider">
+
 <!-- ═══ HERO: PI PLOTS ═══ -->
 <div class="hero-fig">
   <img src="img/ETTh1_pi_combined.png" alt="ETTh1 90% Prediction Intervals — T+GH vs DPFT" />
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 2.</strong> Predicted mean and 90% prediction intervals over 200 consecutive test steps of ETTh1.
+    <strong>Fig. 3.</strong> Predicted mean and 90% prediction intervals over 200 consecutive test steps of ETTh1.
     <em>Left:</em> Transformer and Gaussian Head (deterministic inference, σ̂). <em>Right:</em> DPFT — Ours (MC Dropout, S = 50, σ̄).
     Shaded bands show ±1.645σ̂ (left) and ±1.645σ̄ (right); black line is ground truth.
     MC Dropout produces wider, better-calibrated bands by incorporating epistemic uncertainty beyond the Gaussian head alone.
-  </p>
-</div>
-
-<hr class="divider">
-
-<!-- ═══ CALIBRATION ═══ -->
-<div class="hero-fig">
-  <img src="img/intro.png" alt="Motivation: ground truth, predictive intervals, and calibration" />
-</div>
-<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
-  <p class="hero-caption">
-    <strong>Fig. 3.</strong> Motivation and calibration on ETTh1.
-    <em>(a)</em> Raw OT time series with trend and seasonal components.
-    <em>(b)</em> 90% prediction intervals: Transformer and Gaussian Head (σ̂, deterministic) vs. DPFT (σ̄, MC Dropout).
-    <em>(c)</em> Reliability diagrams: DPFT tracks the perfect-calibration diagonal more closely, confirming that MC Dropout adds epistemic coverage beyond the Gaussian head alone.
   </p>
 </div>
 
