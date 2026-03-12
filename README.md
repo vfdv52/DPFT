@@ -97,6 +97,14 @@ No manual data download required. `train.py` fetches ETTh1 and ETTh2 via `urllib
 
 ---
 
+## Architecture
+
+![DPFT Architecture](docs/img/method2.png)
+
+*Overview of the DPFT pipeline. The input is decomposed into a low-frequency trend **m** and seasonal residual **s** via boundary-padded average pooling. The residual is projected and encoded by an encoder-only Transformer; the last-step trend value is re-injected as an additive skip connection before the heteroscedastic Gaussian output head, which produces per-step (μ, log σ). At inference, MC Dropout runs S=50 stochastic forward passes to decompose total predictive variance into aleatoric and epistemic components.*
+
+---
+
 ## Models
 
 ### `DeterministicLSTM`

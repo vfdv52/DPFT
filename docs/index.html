@@ -497,6 +497,23 @@
 
 <hr class="divider">
 
+<!-- ═══ METHOD FIGURE ═══ -->
+<div class="hero-fig">
+  <img src="img/method2.png" alt="DPFT Architecture Diagram" />
+</div>
+<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
+  <p class="hero-caption">
+    <strong>Fig. 3.</strong> Overview of the DPFT pipeline.
+    The input <strong>x</strong> is decomposed into a low-frequency trend <strong>m</strong> and seasonal residual <strong>s</strong> via boundary-padded average pooling (kernel k = 25).
+    The residual is projected into a d-dimensional token sequence and encoded by N = 2 Transformer encoder layers.
+    The last-step trend value is re-injected as an additive skip connection before the heteroscedastic Gaussian output head,
+    which maps the last-token representation to per-step (μ, log σ) ∈ ℝ<sup>T</sup>.
+    At inference, MC Dropout (S = 50 passes) decomposes total predictive variance into aleatoric and epistemic components.
+  </p>
+</div>
+
+<hr class="divider">
+
 <!-- ═══ MAIN ═══ -->
 <main>
 
