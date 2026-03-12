@@ -472,6 +472,20 @@
   </p>
 </div>
 
+<!-- Abstract (below Fig. 1) -->
+<div class="container" style="margin-top:36px;">
+  <section>
+    <h2>Abstract</h2>
+    <p class="abstract-text">
+      Deterministic neural forecasting models, including recent Transformer architectures, produce point estimates without predictive confidence, limiting their utility in risk-sensitive decision-making settings.
+      To address this gap, we propose <strong>D</strong>ecomposed <strong>P</strong>robabilistic <strong>F</strong>orecasting with <strong>T</strong>ransformers (<strong>DPFT</strong>), an encoder-only Transformer that integrates a moving-average seasonal decomposition module with a heteroscedastic Gaussian output head, trained jointly under negative log-likelihood.
+      We further incorporate Monte Carlo Dropout at inference to capture epistemic uncertainty and decompose total predictive variance into aleatoric and epistemic components.
+      On the ETTh1 and ETTh2 benchmarks, DPFT achieves competitive MSE values of <strong>0.0444</strong> and <strong>0.1143</strong>, respectively, outperforming the LSTM baseline by 5.1% and 12.3%.
+      Code is available at <a href="https://anonymous.4open.science/w/DPFT-7A71/" target="_blank" style="color:var(--accent);">anonymous.4open.science/w/DPFT-7A71</a>.
+    </p>
+  </section>
+</div>
+
 <hr class="divider">
 
 <!-- ═══ INTRO FIGURE ═══ -->
@@ -519,20 +533,8 @@
   </div>
 </div>
 
-<!-- Abstract -->
+<!-- Key Findings -->
 <div class="container">
-  <section>
-    <h2>Abstract</h2>
-    <p class="abstract-text">
-      Deterministic neural forecasting models, including recent Transformer architectures, produce point estimates without predictive confidence, limiting their utility in risk-sensitive decision-making settings.
-      To address this gap, we propose <strong>D</strong>ecomposed <strong>P</strong>robabilistic <strong>F</strong>orecasting with <strong>T</strong>ransformers (<strong>DPFT</strong>), an encoder-only Transformer that integrates a moving-average seasonal decomposition module with a heteroscedastic Gaussian output head, trained jointly under negative log-likelihood.
-      We further incorporate Monte Carlo Dropout at inference to capture epistemic uncertainty and decompose total predictive variance into aleatoric and epistemic components.
-      On the ETTh1 and ETTh2 benchmarks, DPFT achieves competitive MSE values of <strong>0.0444</strong> and <strong>0.1143</strong>, respectively, outperforming the LSTM baseline by 5.1% and 12.3%.
-      Code is available at <a href="https://anonymous.4open.science/w/DPFT-7A71/" target="_blank" style="color:var(--accent);">anonymous.4open.science/w/DPFT-7A71</a>.
-    </p>
-  </section>
-
-  <!-- Key Findings -->
   <section id="method">
     <h2>Key Findings</h2>
     <div class="findings-grid">
