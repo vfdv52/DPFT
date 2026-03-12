@@ -8,6 +8,14 @@ COMP0197 Applied Deep Learning · Group Project 2025–26 · Group Number: 8
 
 ---
 
+## Architecture
+
+![DPFT Architecture](docs/img/method2.png)
+
+*Overview of the DPFT pipeline. The input is decomposed into a low-frequency trend **m** and seasonal residual **s** via boundary-padded average pooling. The residual is projected and encoded by an encoder-only Transformer; the last-step trend value is re-injected as an additive skip connection before the heteroscedastic Gaussian output head, which produces per-step (μ, log σ). At inference, MC Dropout runs S=50 stochastic forward passes to decompose total predictive variance into aleatoric and epistemic components.*
+
+---
+
 ## Project Overview
 
 This project implements and evaluates probabilistic forecasting models on the ETT (Electricity Transformer Temperature) datasets. Rather than producing single-point predictions, the main models output a Gaussian distribution (mean μ and standard deviation σ) at each forecast step, capturing both aleatoric and epistemic uncertainty.
@@ -94,14 +102,6 @@ micromamba run -n comp0197-pt python test.py
 ```
 
 No manual data download required. `train.py` fetches ETTh1 and ETTh2 via `urllib` on first run.
-
----
-
-## Architecture
-
-![DPFT Architecture](docs/img/method2.png)
-
-*Overview of the DPFT pipeline. The input is decomposed into a low-frequency trend **m** and seasonal residual **s** via boundary-padded average pooling. The residual is projected and encoded by an encoder-only Transformer; the last-step trend value is re-injected as an additive skip connection before the heteroscedastic Gaussian output head, which produces per-step (μ, log σ). At inference, MC Dropout runs S=50 stochastic forward passes to decompose total predictive variance into aleatoric and epistemic components.*
 
 ---
 
