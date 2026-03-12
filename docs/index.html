@@ -457,18 +457,30 @@
   </div>
 </header>
 
-<!-- ═══ HERO: PI PLOTS ═══ -->
-<div class="hero-two">
-  <div>
-    <img src="img/ETTh1_transA_pi.png" alt="ETTh1 Transformer+Gaussian Head 90% PI" />
-  </div>
-  <div>
-    <img src="img/ETTh1_transAB_pi.png" alt="ETTh1 DPFT (Ours) 90% PI" />
-  </div>
+<!-- ═══ METHOD FIGURE ═══ -->
+<div class="hero-fig">
+  <img src="img/method2.png" alt="DPFT Architecture Diagram" />
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 1.</strong> Predicted mean and 90% prediction intervals over 200 consecutive test steps of ETTh1.
+    <strong>Fig. 1.</strong> Overview of the DPFT pipeline.
+    The input <strong>x</strong> is decomposed into a low-frequency trend <strong>m</strong> and seasonal residual <strong>s</strong> via boundary-padded average pooling (kernel k = 25).
+    The residual is projected into a d-dimensional token sequence and encoded by N = 2 Transformer encoder layers.
+    The last-step trend value is re-injected as an additive skip connection before the heteroscedastic Gaussian output head,
+    which maps the last-token representation to per-step (μ, log σ) ∈ ℝ<sup>T</sup>.
+    At inference, MC Dropout (S = 50 passes) decomposes total predictive variance into aleatoric and epistemic components.
+  </p>
+</div>
+
+<hr class="divider">
+
+<!-- ═══ HERO: PI PLOTS ═══ -->
+<div class="hero-fig">
+  <img src="img/ETTh1_pi_combined.png" alt="ETTh1 90% Prediction Intervals — T+GH vs DPFT" />
+</div>
+<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
+  <p class="hero-caption">
+    <strong>Fig. 2.</strong> Predicted mean and 90% prediction intervals over 200 consecutive test steps of ETTh1.
     <em>Left:</em> Transformer and Gaussian Head (deterministic inference, σ̂). <em>Right:</em> DPFT — Ours (MC Dropout, S = 50, σ̄).
     Shaded bands show ±1.645σ̂ (left) and ±1.645σ̄ (right); black line is ground truth.
     MC Dropout produces wider, better-calibrated bands by incorporating epistemic uncertainty beyond the Gaussian head alone.
@@ -478,37 +490,15 @@
 <hr class="divider">
 
 <!-- ═══ CALIBRATION ═══ -->
-<div class="hero-two">
-  <div>
-    <img src="img/ETTh1_calibration_transA.png" alt="ETTh1 Transformer+Gaussian Head Reliability Diagram" />
-  </div>
-  <div>
-    <img src="img/ETTh1_calibration_transAB.png" alt="ETTh1 DPFT Reliability Diagram" />
-  </div>
-</div>
-<div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
-  <p class="hero-caption">
-    <strong>Fig. 2.</strong> Reliability diagrams on the ETTh1 test set.
-    <em>Left:</em> Transformer and Gaussian Head. <em>Right:</em> DPFT — Ours (MC Dropout, S = 50).
-    Dashed diagonal = perfect calibration. DPFT tracks the diagonal more closely, particularly at high confidence levels where the Gaussian head alone exhibits systematic undercoverage,
-    indicating that MC Dropout adds epistemic coverage beyond the Gaussian head alone.
-  </p>
-</div>
-
-<hr class="divider">
-
-<!-- ═══ METHOD FIGURE ═══ -->
 <div class="hero-fig">
-  <img src="img/method2.png" alt="DPFT Architecture Diagram" />
+  <img src="img/intro.png" alt="Motivation: ground truth, predictive intervals, and calibration" />
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 3.</strong> Overview of the DPFT pipeline.
-    The input <strong>x</strong> is decomposed into a low-frequency trend <strong>m</strong> and seasonal residual <strong>s</strong> via boundary-padded average pooling (kernel k = 25).
-    The residual is projected into a d-dimensional token sequence and encoded by N = 2 Transformer encoder layers.
-    The last-step trend value is re-injected as an additive skip connection before the heteroscedastic Gaussian output head,
-    which maps the last-token representation to per-step (μ, log σ) ∈ ℝ<sup>T</sup>.
-    At inference, MC Dropout (S = 50 passes) decomposes total predictive variance into aleatoric and epistemic components.
+    <strong>Fig. 3.</strong> Motivation and calibration on ETTh1.
+    <em>(a)</em> Raw OT time series with trend and seasonal components.
+    <em>(b)</em> 90% prediction intervals: Transformer and Gaussian Head (σ̂, deterministic) vs. DPFT (σ̄, MC Dropout).
+    <em>(c)</em> Reliability diagrams: DPFT tracks the perfect-calibration diagonal more closely, confirming that MC Dropout adds epistemic coverage beyond the Gaussian head alone.
   </p>
 </div>
 
