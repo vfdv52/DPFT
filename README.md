@@ -15,9 +15,9 @@ This project implements and evaluates probabilistic forecasting models on the ET
 **Models** (ablation hierarchy):
 - `DeterministicLSTM` — deterministic baseline, trained with MSE loss
 - `DeterministicTransformer` — encoder-only Transformer, trained with MSE loss
-- `ProbabilisticTransformer` (Transformer+Gaussian Head) — Transformer with Gaussian output head, trained with NLL loss
-- `DecompDeterministicTransformer` (Transformer+SeasonalDecomp) — Transformer with seasonal decomposition, trained with MSE loss
-- `DecompProbabilisticTransformer` (Ours) — Transformer with Gaussian head + seasonal decomposition, trained with NLL loss; supports MC Dropout for epistemic uncertainty
+- `ProbabilisticTransformer` (Transformer and Gaussian Head) — Transformer with heteroscedastic Gaussian output head, trained with NLL loss
+- `DecompDeterministicTransformer` (Transformer with Seasonal Decomposition) — Transformer with moving-average trend/seasonal decomposition, trained with MSE loss
+- `DecompProbabilisticTransformer` (DPFT, Ours) — full model combining Gaussian head and seasonal decomposition, trained with NLL loss; MC Dropout at inference decomposes uncertainty into aleatoric and epistemic components
 
 **Datasets**: ETTh1 and ETTh2 (hourly, univariate OT column), auto-downloaded from GitHub.
 
@@ -115,27 +115,27 @@ Encoder-only Transformer for point forecasting. Ablation baseline isolating the 
 - **Output**: `(B, pred_len=24)`
 - **Loss**: MSE
 
-### `ProbabilisticTransformer` (Transformer+Gaussian Head)
+### `ProbabilisticTransformer` (Transformer and Gaussian Head)
 
-Encoder-only Transformer with a Gaussian output head. Adds aleatoric uncertainty estimation over the deterministic Transformer.
+Encoder-only Transformer with a heteroscedastic Gaussian output head. Two independent linear layers map the last-token representation to predicted mean μ and log-standard-deviation log σ per horizon step, trained under Gaussian NLL.
 
 - **Output**: `(mu, log_sigma)` each `(B, pred_len=24)`
 - **Loss**: Gaussian NLL
 - **Architecture**: Linear projection → learnable positional embedding → `nn.TransformerEncoder` → last-token pooling → two linear heads (μ, log σ)
 
-### `DecompDeterministicTransformer` (Transformer+SeasonalDecomp)
+### `DecompDeterministicTransformer` (Transformer with Seasonal Decomposition)
 
-Transformer with trend-seasonal decomposition. Isolates the contribution of the decomposition module.
+Transformer with boundary-padded moving-average decomposition. Isolates the contribution of the seasonal decomposition module to point-forecast accuracy.
 
-- **Decomposition**: moving average trend extraction; seasonal = input − trend
+- **Decomposition**: `m = AvgPool(Pad(x; k))`, `s = x − m`; seasonal residual s fed to encoder, last-step trend value added as a skip connection before the prediction head
 - **Loss**: MSE
 
-### `DecompProbabilisticTransformer` (Ours)
+### `DecompProbabilisticTransformer` (DPFT, Ours)
 
-Full model combining the Gaussian head (A) and seasonal decomposition (B).
+Full model combining the heteroscedastic Gaussian head and seasonal decomposition within a compact encoder-only Transformer.
 
 - **Loss**: Gaussian NLL
-- **MC Dropout**: call `model.train()` at inference time and run N=50 stochastic forward passes to decompose uncertainty into aleatoric (from σ) and epistemic (from MC variance) components
+- **MC Dropout**: keep dropout active at inference and run S=50 stochastic forward passes; aleatoric variance from mean of σ², epistemic variance from variance of per-pass means; total σ̄ = √(aleatoric + epistemic) used for prediction intervals
 
 ---
 
@@ -169,8 +169,8 @@ Full model combining the Gaussian head (A) and seasonal decomposition (B).
 | Informer | 0.0527 | 0.1808 | — | 0.1251 | 0.2570 | — |
 | LSTM | 0.0467 | 0.1615 | — | 0.1303 | 0.2632 | — |
 | Transformer | 0.0469 | 0.1630 | — | 0.1222 | 0.2542 | — |
-| Transformer+Gaussian Head | 0.0470 | 0.1593 | -0.0631 | 0.1215 | 0.2484 | 0.1850 |
-| Transformer+SeasonalDecomp | 0.0456 | 0.1575 | — | 0.1184 | 0.2469 | — |
+| Transformer and Gaussian Head | 0.0470 | 0.1593 | -0.0631 | 0.1215 | 0.2484 | 0.1850 |
+| Transformer with Seasonal Decomposition | 0.0456 | 0.1575 | — | 0.1184 | 0.2469 | — |
 | **Ours** | **0.0444** | **0.1535** | **-0.1922** | **0.1143** | **0.2393** | 0.1322 |
 
 ---
@@ -202,7 +202,7 @@ Full model combining the Gaussian head (A) and seasonal decomposition (B).
 | Transformer heads | 4 |
 | Transformer layers | 2 |
 | Feedforward dim | 256 |
-| Dropout | 0.2 |
+| Dropout | 0.4 |
 | MC Dropout samples | 50 |
 
 ---

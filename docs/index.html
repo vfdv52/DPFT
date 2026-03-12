@@ -460,17 +460,18 @@
 <!-- ═══ HERO: PI PLOTS ═══ -->
 <div class="hero-two">
   <div>
-    <img src="img/ETTh1_transAB_pi.png" alt="ETTh1 Ours 90% Prediction Interval" />
+    <img src="img/ETTh1_transA_pi.png" alt="ETTh1 Transformer+Gaussian Head 90% PI" />
   </div>
   <div>
-    <img src="img/ETTh2_transAB_pi.png" alt="ETTh2 Ours 90% Prediction Interval" />
+    <img src="img/ETTh1_transAB_pi.png" alt="ETTh1 DPFT (Ours) 90% PI" />
   </div>
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 1.</strong> 90% prediction intervals produced by <em>DecompProbFormer</em> (Ours, MC Dropout) on the ETTh1 (left) and ETTh2 (right) test sets.
-    The shaded band captures aleatoric and epistemic uncertainty jointly. The model closely tracks the ground truth mean (black) while providing well-calibrated uncertainty bands.
-    ETTh2 exhibits larger uncertainty — consistent with its inherently noisier OT signal.
+    <strong>Fig. 1.</strong> Predicted mean and 90% prediction intervals over 200 consecutive test steps of ETTh1.
+    <em>Left:</em> Transformer and Gaussian Head (deterministic inference, σ̂). <em>Right:</em> DPFT — Ours (MC Dropout, S = 50, σ̄).
+    Shaded bands show ±1.645σ̂ (left) and ±1.645σ̄ (right); black line is ground truth.
+    MC Dropout produces wider, better-calibrated bands by incorporating epistemic uncertainty beyond the Gaussian head alone.
   </p>
 </div>
 
@@ -479,17 +480,18 @@
 <!-- ═══ CALIBRATION ═══ -->
 <div class="hero-two">
   <div>
-    <img src="img/ETTh1_calibration_transAB.png" alt="ETTh1 Calibration Curve" />
+    <img src="img/ETTh1_calibration_transA.png" alt="ETTh1 Transformer+Gaussian Head Reliability Diagram" />
   </div>
   <div>
-    <img src="img/ETTh2_calibration_transAB.png" alt="ETTh2 Calibration Curve" />
+    <img src="img/ETTh1_calibration_transAB.png" alt="ETTh1 DPFT Reliability Diagram" />
   </div>
 </div>
 <div style="max-width:1000px;margin:12px auto 0;padding:0 24px;">
   <p class="hero-caption">
-    <strong>Fig. 2.</strong> Reliability diagrams (calibration curves) for Ours on ETTh1 (left) and ETTh2 (right).
-    The diagonal dashed line represents perfect calibration. Both models maintain high empirical coverage across confidence levels,
-    indicating conservative but reliable prediction intervals.
+    <strong>Fig. 2.</strong> Reliability diagrams on the ETTh1 test set.
+    <em>Left:</em> Transformer and Gaussian Head. <em>Right:</em> DPFT — Ours (MC Dropout, S = 50).
+    Dashed diagonal = perfect calibration. DPFT tracks the diagonal more closely, particularly at high confidence levels where the Gaussian head alone exhibits systematic undercoverage,
+    indicating that MC Dropout adds epistemic coverage beyond the Gaussian head alone.
   </p>
 </div>
 
@@ -515,16 +517,15 @@
   <section>
     <h2>Abstract</h2>
     <p class="abstract-text">
-      Deterministic deep learning models for time series forecasting produce single-point predictions that fail to communicate the inherent uncertainty of future observations.
-      We present <strong>DecompProbFormer</strong>, an encoder-only Transformer that combines two complementary inductive biases:
-      <strong>(A)</strong> a heteroscedastic Gaussian output head trained with negative log-likelihood, which directly models aleatoric uncertainty by predicting both mean μ and log-standard-deviation log σ per horizon step;
-      and <strong>(B)</strong> a learnable moving-average seasonal decomposition module that separates trend from seasonal residuals before encoding, improving non-stationary signal modelling.
+      Deterministic neural forecasting models, including recent Transformer architectures, produce point estimates without predictive confidence, limiting their utility in risk-sensitive decision-making settings.
+      We propose <strong>DPFT</strong> (Decomposed Probabilistic Forecasting with Transformers), an encoder-only Transformer that integrates a moving-average seasonal decomposition module with a heteroscedastic Gaussian output head, trained jointly under negative log-likelihood.
+      The decomposition separates each input into a low-frequency trend and a seasonal residual: the residual is encoded by the Transformer while the last-step trend value is re-injected as an additive skip connection, enabling the attention mechanism to focus on residual oscillatory structure.
     </p>
     <p class="abstract-text" style="margin-top:14px;">
-      We conduct a systematic ablation across seven model variants — GNN, Informer, LSTM baseline, deterministic Transformer, Transformer+Gaussian Head, Transformer+SeasonalDecomp, and the full Ours — on two benchmark datasets (ETTh1 and ETTh2).
-      The full model achieves the best MSE on both datasets (ETTh1: <strong>0.0444</strong>, ETTh2: <strong>0.1143</strong>), reducing ETTh2 error by 12% relative to the LSTM baseline.
-      Epistemic uncertainty is further quantified via MC Dropout at inference, enabling decomposed aleatoric and epistemic confidence intervals.
-      Our results demonstrate that seasonal decomposition contributes the larger accuracy gain, while the Gaussian head adds calibrated uncertainty estimates at negligible accuracy cost.
+      We further incorporate Monte Carlo Dropout at inference to capture epistemic uncertainty and decompose total predictive variance into aleatoric and epistemic components.
+      A systematic ablation across seven variants — GNN, Informer, LSTM, deterministic Transformer, Transformer and Gaussian Head, Transformer with Seasonal Decomposition, and the full DPFT — on ETTh1 and ETTh2 shows that DPFT leads on all reported metrics across both benchmarks (ETTh1 MSE: <strong>0.0444</strong>, ETTh2 MSE: <strong>0.1143</strong>).
+      Ablations indicate that seasonal decomposition drives most of the point-forecast gain, while the Gaussian head adds calibrated uncertainty without sacrificing MSE.
+      Deterministic variants are selected by validation MSE; probabilistic variants by validation NLL.
     </p>
   </section>
 
@@ -542,7 +543,7 @@
       </div>
       <div class="finding-card">
         <div class="finding-num">03</div>
-        <p>The full model (Ours) achieves <strong>best MSE on both datasets</strong> and best NLL on ETTh1 (−0.1922), confirming that decomposition and probabilistic head are complementary.</p>
+        <p>DPFT achieves <strong>best MSE, MAE, and NLL on both datasets</strong> (ETTh1 NLL −0.1922, ETTh2 NLL 0.1322), confirming that decomposition and the probabilistic head yield consistent, complementary gains.</p>
       </div>
       <div class="finding-card">
         <div class="finding-num">04</div>
@@ -596,12 +597,12 @@
               <td>0.1222</td><td>0.2542</td><td>—</td>
             </tr>
             <tr>
-              <td>Transformer+Gaussian Head</td>
+              <td>Transformer and Gaussian Head</td>
               <td>0.0470</td><td>0.1593</td><td>−0.0631</td>
               <td>0.1215</td><td>0.2484</td><td>0.1850</td>
             </tr>
             <tr>
-              <td>Transformer+SeasonalDecomp</td>
+              <td>Transformer + Seasonal Decomp.</td>
               <td>0.0456</td><td>0.1575</td><td>—</td>
               <td>0.1184</td><td>0.2469</td><td>—</td>
             </tr>
@@ -620,12 +621,12 @@
         <div class="col-card">
           <h3>Architecture</h3>
           <ul>
-            <li><strong>Input projection:</strong> Linear(1 → d_model=64)</li>
-            <li><strong>Positional encoding:</strong> Learnable nn.Embedding</li>
-            <li><strong>Encoder:</strong> 2 × TransformerEncoderLayer (nhead=4, ff=256, dropout=0.2)</li>
-            <li><strong>Module A:</strong> Two linear heads → (μ, log σ) per horizon step</li>
-            <li><strong>Module B:</strong> Moving-avg decomposition (kernel=25); seasonal → encoder, trend → additive skip</li>
-            <li><strong>Loss:</strong> Gaussian NLL (heteroscedastic)</li>
+            <li><strong>Input projection:</strong> Linear(1 → d_model=64) per time step</li>
+            <li><strong>Positional encoding:</strong> Learnable nn.Embedding(L, d)</li>
+            <li><strong>Encoder:</strong> N=2 × TransformerEncoderLayer (n_h=4, d_ff=256, p=0.4)</li>
+            <li><strong>Gaussian head:</strong> Two independent linear layers → (μ, log σ) ∈ ℝᵀ; log σ clamped to [−6, 6]</li>
+            <li><strong>Decomposition:</strong> m = AvgPool(Pad(x; k=25)), s = x − m; s → encoder, last-step m → additive skip before head</li>
+            <li><strong>Loss:</strong> Mean Gaussian NLL over batch × horizon</li>
           </ul>
         </div>
         <div class="col-card">
@@ -635,8 +636,8 @@
             <li><strong>Normalisation:</strong> StandardScaler fit on train</li>
             <li><strong>Optimiser:</strong> Adam, lr=1e-3</li>
             <li><strong>Scheduler:</strong> ReduceLROnPlateau (patience=7, ×0.5)</li>
-            <li><strong>Early stopping:</strong> patience=15 epochs on val NLL / MSE</li>
-            <li><strong>MC Dropout:</strong> 50 stochastic passes at inference</li>
+            <li><strong>Early stopping:</strong> patience=15 on val NLL (probabilistic) or val MSE (deterministic)</li>
+            <li><strong>MC Dropout:</strong> S=50 stochastic passes; σ̄ = √(aleatoric + epistemic)</li>
           </ul>
         </div>
       </div>
