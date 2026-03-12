@@ -525,14 +525,10 @@
     <h2>Abstract</h2>
     <p class="abstract-text">
       Deterministic neural forecasting models, including recent Transformer architectures, produce point estimates without predictive confidence, limiting their utility in risk-sensitive decision-making settings.
-      We propose <strong>DPFT</strong> (Decomposed Probabilistic Forecasting with Transformers), an encoder-only Transformer that integrates a moving-average seasonal decomposition module with a heteroscedastic Gaussian output head, trained jointly under negative log-likelihood.
-      The decomposition separates each input into a low-frequency trend and a seasonal residual: the residual is encoded by the Transformer while the last-step trend value is re-injected as an additive skip connection, enabling the attention mechanism to focus on residual oscillatory structure.
-    </p>
-    <p class="abstract-text" style="margin-top:14px;">
+      To address this gap, we propose <strong>D</strong>ecomposed <strong>P</strong>robabilistic <strong>F</strong>orecasting with <strong>T</strong>ransformers (<strong>DPFT</strong>), an encoder-only Transformer that integrates a moving-average seasonal decomposition module with a heteroscedastic Gaussian output head, trained jointly under negative log-likelihood.
       We further incorporate Monte Carlo Dropout at inference to capture epistemic uncertainty and decompose total predictive variance into aleatoric and epistemic components.
-      A systematic ablation across seven variants — GNN, Informer, LSTM, deterministic Transformer, Transformer and Gaussian Head, Transformer with Seasonal Decomposition, and the full DPFT — on ETTh1 and ETTh2 shows that DPFT leads on all reported metrics across both benchmarks (ETTh1 MSE: <strong>0.0444</strong>, ETTh2 MSE: <strong>0.1143</strong>).
-      Ablations indicate that seasonal decomposition drives most of the point-forecast gain, while the Gaussian head adds calibrated uncertainty without sacrificing MSE.
-      Deterministic variants are selected by validation MSE; probabilistic variants by validation NLL.
+      On the ETTh1 and ETTh2 benchmarks, DPFT achieves competitive MSE values of <strong>0.0444</strong> and <strong>0.1143</strong>, respectively, outperforming the LSTM baseline by 5.1% and 12.3%.
+      Code is available at <a href="https://anonymous.4open.science/w/DPFT-7A71/" target="_blank" style="color:var(--accent);">anonymous.4open.science/w/DPFT-7A71</a>.
     </p>
   </section>
 
