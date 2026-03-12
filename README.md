@@ -1,6 +1,6 @@
 # DPFT: A Framework for Decomposed Probabilistic Forecasting with Transformers
 
-COMP0197 Applied Deep Learning · University College London · Group Project 2025–26
+COMP0197 Applied Deep Learning · Group Project 2025–26 · Group Number: 8
 
 **[Project Page](https://vfdv52.github.io/DecompProbFormer/)**
 
