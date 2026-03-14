@@ -32,7 +32,7 @@ This project implements and evaluates probabilistic forecasting models on the ET
 ## File Structure
 
 ```
-CW2/
+main/
 ├── train.py                  # Entry point: train all ablation models, save checkpoints
 ├── test.py                   # Entry point: evaluate saved models, generate plots
 ├── run.sh                    # One-shot script: trains then evaluates with configurable flags
