@@ -475,11 +475,16 @@
   <section>
     <h2>Abstract</h2>
     <p class="abstract-text">
-      Deterministic neural forecasting models, including recent Transformer architectures, produce point estimates without predictive confidence, limiting their utility in risk-sensitive decision-making settings.
-      To address this gap, we propose <strong>D</strong>ecomposed <strong>P</strong>robabilistic <strong>F</strong>orecasting with <strong>T</strong>ransformers (<strong>DPFT</strong>), an encoder-only Transformer that integrates a moving-average seasonal decomposition module with a heteroscedastic Gaussian output head, trained jointly under negative log-likelihood.
-      We further incorporate Monte Carlo Dropout at inference to capture epistemic uncertainty and decompose total predictive variance into aleatoric and epistemic components.
-      On the ETTh1 and ETTh2 benchmarks, DPFT achieves competitive MSE values of <strong>0.0444</strong> and <strong>0.1143</strong>, respectively, outperforming the LSTM baseline by 5.1% and 12.3%.
-      Code is available at <a href="https://anonymous.4open.science/w/DPFT-7A71/" target="_blank" style="color:var(--accent);">anonymous.4open.science/w/DPFT-7A71</a>.
+      Neural time series forecasting underpins critical decisions in energy management, financial planning, and climate monitoring, where reliable prediction confidence is as important 
+      as point accuracy. However, the dominant paradigm produces only deterministic outputs and provides no quantification of predictive reliability. Structural advances such as seasonal 
+      decomposition and efficient attention have improved point-forecast accuracy but are evaluated almost exclusively without probabilistic objectives. In this work, we identify two 
+      fundamental limitations of existing approaches: (1) the inability to decompose predictive uncertainty into interpretable <em>aleatoric</em> and <em>epistemic</em> components, and 
+      (2) the compatibility of structural inductive biases with probabilistic training objectives has not been systematically studied. To address these, we propose <strong>DPFT 
+      (Decomposed Probabilistic Forecasting with Transformers)</strong>, which integrates boundary-padded moving-average decomposition with a heteroscedastic Gaussian output head 
+      and Monte Carlo Dropout inference within an encoder-only Transformer. The decomposition separates trend from seasonal residuals; the Gaussian head provides step-varying aleatoric 
+      estimates; MC Dropout decomposes total predictive variance into aleatoric and epistemic components at inference without architectural modification. A seven-model ablation on ETTh1 
+      and ETTh2 demonstrates consistent point-forecast and probabilistic gains, with reliability diagrams confirming substantially improved calibration over the heteroscedastic head alone. 
+      Code is available at <a href="https://anonymous.4open.science/w/DPFT-7A71" target="_blank">https://anonymous.4open.science/w/DPFT-7A71</a>.
     </p>
   </section>
 </div>
